@@ -393,6 +393,11 @@ WORD32 ixheaacd_fd_channel_stream(
   ixheaacd_scale_factor_data(info, tot_sfb, *max_sfb, info->sfb_per_sbk,
                              ptr_code_book);
 
+  if ((it_bit_buff->ptr_read_next > it_bit_buff->ptr_bit_buf_end - 3) &&
+      (it_bit_buff->size == it_bit_buff->max_size)) {
+    return -1;
+  }
+
   ixheaacd_section_data(usac_data, it_bit_buff, info, global_gain,
                         usac_data->factors[chn], usac_data->group_dis[chn],
                         ptr_code_book);
@@ -428,8 +433,7 @@ WORD32 ixheaacd_fd_channel_stream(
       usac_data, max_spec_coefficients, noise_level, noise_offset, arth_size,
       it_bit_buff, *max_sfb, arith_reset_flag, noise_filling, chn);
 
-  if(err_code != 0)
-      return err_code;
+  if (err_code != 0) return err_code;
 
   usac_data->fac_data_present[chn] = ixheaacd_read_bits_buf(it_bit_buff, 1);
 
